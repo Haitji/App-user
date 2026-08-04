@@ -1,2 +1,11 @@
-<p>user-app works!</p>
 <h3>{{title}}</h3>
+<div class="container my-4">
+    <div class="row">
+        <div class="col">
+           <user-form (newUserEventEmmiter)="addUser($event)" [user]="userSelected"></user-form>
+        </div>
+        <div class="col">
+           <user [users]="users" (userIdEventEmitter)="removeUser($event)" (userEventEmitter)="selectUser($event)"></user>
+        </div>
+    </div>
+</div>
