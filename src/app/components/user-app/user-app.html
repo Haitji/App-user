@@ -1,11 +1,21 @@
 <h3>{{title}}</h3>
 <div class="container my-4">
+    <button class="btn btn-primary" (click)="setOpen()">Abrir modal</button>
     <div class="row">
-        <div class="col">
-           <user-form (newUserEventEmmiter)="addUser($event)" [user]="userSelected"></user-form>
+        @if(open){
+        <div class="abrir-modal">
+            <user-form (newUserEventEmmiter)="addUser($event)" [user]="userSelected" [open]="open"
+                (openEventEmitter)="setOpen()"></user-form>
         </div>
+
+
+        }
         <div class="col">
-           <user [users]="users" (userIdEventEmitter)="removeUser($event)" (userEventEmitter)="selectUser($event)"></user>
+            <user [users]="users" (userIdEventEmitter)="removeUser($event)" (userEventEmitter)="selectUser($event)">
+            </user>
         </div>
+
+
+
     </div>
 </div>

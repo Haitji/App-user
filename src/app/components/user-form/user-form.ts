@@ -14,6 +14,10 @@ export class UserForm {
 
     @Input() user: User;
 
+    @Input() open: boolean = false;
+
+    @Output() openEventEmitter = new EventEmitter();
+
     constructor() {
         this.user = {
             id: 0,
@@ -40,5 +44,9 @@ export class UserForm {
     cleanForm(userForm: NgForm): void {
         userForm.reset();
         userForm.resetForm();
+    }
+
+    onOpen(): void{
+        this.openEventEmitter.emit();
     }
 }
