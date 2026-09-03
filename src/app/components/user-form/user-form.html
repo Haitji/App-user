@@ -1,11 +1,10 @@
-<div class="modal animacion fadeIn" tabindex="-1" style="display: block;">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onOpen()"></button>
+<div class="card animacion fadeIn">
+
+    <div class="card-content">
+      <div class="card-header">
+        <h5 class="card-title">New user</h5>
       </div>
-      <div class="modal-body">
+      <div class="card-body">
          <form (ngSubmit)="onSubmit(userForm)" #userForm="ngForm">
                     <div>
                         <input type="text" name="name" placeholder="Name" [(ngModel)]="user.name"
@@ -74,6 +73,6 @@
       </div>
 
     </div>
-  </div>
+
 </div>
                

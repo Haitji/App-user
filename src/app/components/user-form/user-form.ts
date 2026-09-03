@@ -2,6 +2,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../model/user';
+import { SharingData } from '../../services/sharing-data';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -12,30 +14,32 @@ import { User } from '../../model/user';
 })
 export class UserForm {
 
-    @Input() user: User;
+    user: User;
 
-    @Input() open: boolean = false;
 
-    @Output() openEventEmitter = new EventEmitter();
-
-    constructor() {
-        this.user = {
-            id: 0,
-            name: '',
-            lastname: '',
-            email: '',
-            username: '',
-            password: ''
+    constructor(private sharingData: SharingData, private router: Router) {
+        if (this.router.currentNavigation()?.extras.state) {
+            this.user =
+                this.router.currentNavigation()?.extras.state!['userRow'];
+                console.log("Llega");
+                console.log(this.user);
+        } else {
+            this.user = {
+                id: 0,
+                name: '',
+                lastname: '',
+                email: '',
+                username: '',
+                password: ''
+            };
         }
+
     }
-
-
-    @Output() newUserEventEmmiter: EventEmitter<User> = new EventEmitter();
 
 
     onSubmit(userForm: NgForm): void {
         if (userForm.valid) {
-            this.newUserEventEmmiter.emit(this.user);
+            this.sharingData.newUserEventEmitter.emit(this.user);
             console.log(this.user);
         }
 
@@ -46,7 +50,4 @@ export class UserForm {
         userForm.resetForm();
     }
 
-    onOpen(): void{
-        this.openEventEmitter.emit();
-    }
 }
