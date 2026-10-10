@@ -5,8 +5,6 @@ import Swal from 'sweetalert2';
 import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { SharingData } from '../../services/sharing-data';
-import { Observable } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'user',

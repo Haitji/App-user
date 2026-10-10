@@ -1,78 +1,92 @@
 <div class="card animacion fadeIn">
 
     <div class="card-content">
-      <div class="card-header">
-        <h5 class="card-title">New user</h5>
-      </div>
-      <div class="card-body">
-         <form (ngSubmit)="onSubmit(userForm)" #userForm="ngForm">
-                    <div>
-                        <input type="text" name="name" placeholder="Name" [(ngModel)]="user.name"
-                            class="form-control my-2"  #name="ngModel">
-                        @if(name.invalid && (name.dirty || name.touched)){
+        <div class="card-header">
+            <h5 class="card-title">New user</h5>
+        </div>
+        <div class="card-body">
+            <form (ngSubmit)="onSubmit(userForm)" #userForm="ngForm">
+                <div>
+                    <input type="text" name="name" placeholder="Name" [(ngModel)]="user.name" class="form-control my-2"
+                        #name="ngModel">
+                    @if(errors?.name){
+                    <div class="text-danger">{{errors.name}}</div>
+                    }
+                    <!-- @if(name.invalid && (name.dirty || name.touched)){
                         @if(name.errors!['required']){
                         <div class="text-danger">Nombre requerido</div>
                         }
-                        }
-                    </div>
-                    <div>
-                        <input type="text" name="lastname" placeholder="Lastname" [(ngModel)]="user.lastname"
-                            class="form-control my-2" #lastname="ngModel">
-                        @if(lastname.invalid && (lastname.dirty || lastname.touched)){
+                        } -->
+                </div>
+                <div>
+                    <input type="text" name="lastname" placeholder="Lastname" [(ngModel)]="user.lastname"
+                        class="form-control my-2" #lastname="ngModel">
+                        @if(errors?.lastname){
+                    <div class="text-danger">{{errors.lastname}}</div>
+                    }
+                    <!-- @if(lastname.invalid && (lastname.dirty || lastname.touched)){
                         @if(lastname.errors!['required']){
                         <div class="text-danger">Apellido requerido</div>
                         }
-                        }
-                    </div>
-                    <div>
-                        <input type="email" name="email" placeholder="Email" [(ngModel)]="user.email"
-                            class="form-control my-2" required email #email="ngModel">
-                        @if(email.invalid && (email.dirty || email.touched)){
+                        } -->
+                </div>
+                <div>
+                    <input type="email" name="email" placeholder="Email" [(ngModel)]="user.email"
+                        class="form-control my-2" #email="ngModel">
+                        @if(errors?.email){
+                    <div class="text-danger">{{errors.email}}</div>
+                    }
+                    <!-- @if(email.invalid && (email.dirty || email.touched)){
                         @if(email.errors!['required']){
                         <div class="text-danger">Email requerido</div>
                         }
                         @if (email.errors?.['email']) {
                         <div class="text-danger">El formato del email no es válido</div>
                         }
-                        }
-                    </div>
-                    <div>
-                        <input type="text" name="username" placeholder="Username" [(ngModel)]="user.username"
-                            class="form-control my-2" required minlength="5" #username="ngModel">
-                        @if(username.invalid && (username.dirty || username.touched)){
+                        } -->
+                </div>
+                <div>
+                    <input type="text" name="username" placeholder="Username" [(ngModel)]="user.username"
+                        class="form-control my-2" #username="ngModel">
+                        @if(errors?.username){
+                    <div class="text-danger">{{errors.username}}</div>
+                    }
+                    <!-- @if(username.invalid && (username.dirty || username.touched)){
                         @if(username.errors!['required']){
                         <div class="text-danger">username requerido</div>
                         }
                         @if(username.errors!['minlength']){
                         <div class="text-danger">username min lenght is 5</div>
                         }
-                        }
-                    </div>
-                    <div>
-                        <input type="password" name="password" placeholder="Password" [(ngModel)]="user.password"
-                            class="form-control my-2" required minlength="5" #password="ngModel">
-                        @if(password.invalid && (password.dirty || password.touched)){
+                        } -->
+                </div>
+                <div>
+                    <input type="password" name="password" placeholder="Password" [(ngModel)]="user.password"
+                        class="form-control my-2"  #password="ngModel">
+                        @if(errors?.password){
+                    <div class="text-danger">{{errors.password}}</div>
+                    }
+                    <!-- @if(password.invalid && (password.dirty || password.touched)){
                         @if(password.errors!['required']){
                         <div class="text-danger">password requerido</div>
                         }
                         @if(password.errors!['minlength']){
                         <div class="text-danger">password min lenght is 5</div>
                         }
-                        }
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary my-2" [disabled]="userForm.invalid">
-                            Create
-                        </button>
-                        <button class="btn btn-primary my-2 mx-4" (click)="cleanForm(userForm)">
-                            Clear
-                        </button>
-                    </div>
-                </form>
-            
-      </div>
+                        } -->
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary my-2">
+                        Create
+                    </button>
+                    <button class="btn btn-primary my-2 mx-4" (click)="cleanForm(userForm)">
+                        Clear
+                    </button>
+                </div>
+            </form>
+
+        </div>
 
     </div>
 
 </div>
-               

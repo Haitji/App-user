@@ -64,32 +64,42 @@ export class App {
                             }
                             return u;
                         })
+                        Swal.fire({
+                            icon: "success",
+                            title: "Guardado",
+                            text: "Usuario guardado con exito",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
                         this.router.navigate(['/users'], { state: { users: this.users } })
                     },
                     error: (err) => {
                         this.sharingData.errorsUserFormEventEmitter.emit(err.error);
+                        console.log(err.error)
                     }
                 });
             } else {
                 this.service.createUser(user).subscribe({
                     next: (userNew) => {
                         this.users = [... this.users, { ...userNew }];
+                        Swal.fire({
+                            icon: "success",
+                            title: "Guardado",
+                            text: "Usuario guardado con exito",
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
                         this.router.navigate(['/users'], { state: { users: this.users } })
                     },
                     error: (err) => {
                         this.sharingData.errorsUserFormEventEmitter.emit(err.error);
+                        console.log(err.error)
                     }
                 })
             }
 
 
-            Swal.fire({
-                icon: "success",
-                title: "Guardado",
-                text: "Usuario guardado con exito",
-                showConfirmButton: false,
-                timer: 1500
-            });
+
         })
 
         this.cleanUser();
