@@ -8,7 +8,7 @@
          <form (ngSubmit)="onSubmit(userForm)" #userForm="ngForm">
                     <div>
                         <input type="text" name="name" placeholder="Name" [(ngModel)]="user.name"
-                            class="form-control my-2" required #name="ngModel">
+                            class="form-control my-2"  #name="ngModel">
                         @if(name.invalid && (name.dirty || name.touched)){
                         @if(name.errors!['required']){
                         <div class="text-danger">Nombre requerido</div>
@@ -17,7 +17,7 @@
                     </div>
                     <div>
                         <input type="text" name="lastname" placeholder="Lastname" [(ngModel)]="user.lastname"
-                            class="form-control my-2" required #lastname="ngModel">
+                            class="form-control my-2" #lastname="ngModel">
                         @if(lastname.invalid && (lastname.dirty || lastname.touched)){
                         @if(lastname.errors!['required']){
                         <div class="text-danger">Apellido requerido</div>

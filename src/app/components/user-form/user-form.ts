@@ -1,9 +1,10 @@
 
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { User } from '../../model/user';
 import { SharingData } from '../../services/sharing-data';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../services/user-service';
 
 
 @Component({
@@ -12,28 +13,56 @@ import { Router } from '@angular/router';
     templateUrl: './user-form.html',
     styleUrl: './user-form.css',
 })
-export class UserForm {
+export class UserForm implements OnInit {
 
     user: User;
+    private cdr = inject(ChangeDetectorRef);
+    errors: any = {};
 
 
-    constructor(private sharingData: SharingData, private router: Router) {
-        if (this.router.currentNavigation()?.extras.state) {
-            this.user =
-                this.router.currentNavigation()?.extras.state!['userRow'];
-                console.log("Llega");
-                console.log(this.user);
-        } else {
-            this.user = {
-                id: 0,
-                name: '',
-                lastname: '',
-                email: '',
-                username: '',
-                password: ''
-            };
-        }
+    constructor(private sharingData: SharingData, private route: ActivatedRoute, private service: UserService) {
+        // if (this.router.currentNavigation()?.extras.state) {
+        //     this.user =
+        //         this.router.currentNavigation()?.extras.state!['userRow'];
+        //     console.log("Llega");
+        //     console.log(this.user);
+        // } else {
+        //     this.user = {
+        //         id: 0,
+        //         name: '',
+        //         lastname: '',
+        //         email: '',
+        //         username: '',
+        //         password: ''
+        //     };
+        // }
+        this.user = {
+            id: 0,
+            name: '',
+            lastname: '',
+            email: '',
+            username: '',
+            password: ''
+        };
+    }
 
+    ngOnInit(): void {
+
+        // this.sharingData.selectUserEventEmitter.subscribe(user=>{
+        //     this.user = user;
+        // })
+        this.sharingData.errorsUserFormEventEmitter.subscribe(errors => this.errors)
+        this.route.paramMap.subscribe(params => {
+            const id: number = +(params.get('id') || '0');
+
+            if (id > 0) {
+                //this.sharingData.findUserByIdEventEmitter.emit(id);
+                this.service.findByUser(id).subscribe(user => {
+                    this.user = user;
+                    this.cdr.detectChanges();
+                });
+            }
+        })
     }
 
 

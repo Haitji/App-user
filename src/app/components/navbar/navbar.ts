@@ -11,5 +11,4 @@ import { User } from '../../model/user';
 export class Navbar {
 
   @Input() users: User[] = [];
-
 }

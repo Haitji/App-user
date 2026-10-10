@@ -40,29 +40,49 @@ export class App {
         })
         this.addUser();
         this.removeUser();
-        this.selectUser();
+        this.findUserById();
+        // this.selectUser();
+    }
+
+    findUserById() {
+        this.sharingData.findUserByIdEventEmitter.subscribe(id => {
+            const user = this.users.find(user => user.id == id);
+            this.sharingData.selectUserEventEmitter.emit(user);
+        })
     }
 
     addUser() {
 
         this.sharingData.newUserEventEmitter.subscribe(user => {
-            const fecha: Date = new Date();
-            const fechaNumero: number = fecha.getTime();
+
             if (user.id > 0) {
-                this.users = this.users.map(u => {
-                    if (u.id == user.id) {
-                        return { ...user };
+                this.service.updateUser(user).subscribe({
+                    next: (userUpdate) => {
+                        this.users = this.users.map(u => {
+                            if (u.id == userUpdate.id) {
+                                return { ...userUpdate };
+                            }
+                            return u;
+                        })
+                        this.router.navigate(['/users'], { state: { users: this.users } })
+                    },
+                    error: (err) => {
+                        this.sharingData.errorsUserFormEventEmitter.emit(err.error);
                     }
-                    return u;
-                })
+                });
             } else {
-                this.users = [... this.users, { ...user, id: fechaNumero }];
+                this.service.createUser(user).subscribe({
+                    next: (userNew) => {
+                        this.users = [... this.users, { ...userNew }];
+                        this.router.navigate(['/users'], { state: { users: this.users } })
+                    },
+                    error: (err) => {
+                        this.sharingData.errorsUserFormEventEmitter.emit(err.error);
+                    }
+                })
             }
-            this.router.navigate(['/users'], {
-                state: {
-                    users: this.users
-                }
-            })
+
+
             Swal.fire({
                 icon: "success",
                 title: "Guardado",
@@ -77,22 +97,21 @@ export class App {
 
     removeUser(): void {
         this.sharingData.userIdEventEmitter.subscribe(id => {
-            this.users = this.users.filter(u => u.id != id);
-            this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
-            this.router.navigate(['/users'], {
-                state: {
-                    users: this.users
-                }
-            })
-        });
-        });
-        
-    }
+            this.service.removeUser(id).subscribe(() => {
+                this.users = this.users.filter(u => u.id != id);
+                this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
+                    this.router.navigate(['/users'], { state: { users: this.users } })
+                });
+            });
 
-    selectUser(): void {
-        this.sharingData.selectUserEventEmitter.subscribe(userRow => {
-            this.userSelected = { ...userRow };
-        })
+        });
 
     }
+
+    // selectUser(): void {
+    //     this.sharingData.selectUserEventEmitter.subscribe(userRow => {
+    //         this.userSelected = { ...userRow };
+    //     })
+
+    // }
 }
