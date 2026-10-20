@@ -2,35 +2,50 @@
 import { ChangeDetectorRef, Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { User } from '../../model/user';
 import Swal from 'sweetalert2';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { SharingData } from '../../services/sharing-data';
+import { PaginatorComponent } from '../paginator-component/paginator-component';
 
 @Component({
   selector: 'user',
-  imports: [RouterLink],
+  imports: [RouterLink,PaginatorComponent],
   templateUrl: './user.html',
   styleUrl: './user.css',
 })
 export class UserComponent implements OnInit {
 
   users: User[] = [];
+  paginator: any = {};
+  pageUrl: string= '/users/page'
   private cdr = inject(ChangeDetectorRef);
 
   title: string = "listado de usuarios";
 
-  constructor(private router: Router, private service: UserService, private sharingData: SharingData) {
-    if(this.router.currentNavigation()?.extras.state){
+  constructor(private router: Router, private service: UserService, private sharingData: SharingData, private route: ActivatedRoute) {
+    if (this.router.currentNavigation()?.extras.state) {
       this.users = this.router.currentNavigation()?.extras.state!['users'];
+      this.paginator = this.router.currentNavigation()?.extras.state!['paginator'];
     }
   }
 
   ngOnInit(): void {
-    if (this.users.length == 0 || this.users == null || this.users == undefined) {
-      console.log("Consulta find all")
-      this.service.findAll().subscribe(users => this.users = users);
-      this.cdr.detectChanges();
-    }
+
+    console.log("Consulta find all");
+    this.route.paramMap.subscribe(params => {
+      const page = +(params.get('page') || 0);
+      console.log(page)
+      this.service.findAllPageable(page).subscribe(pageable => {
+        this.users = pageable.content as User[];
+        this.paginator = pageable;
+        this.sharingData.pageUserEventEmitter.emit({users: this.users, paginator: this.paginator});
+        this.cdr.detectChanges();
+      })
+
+    });
+
+
+
 
   }
 
