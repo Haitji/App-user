@@ -1,15 +1,29 @@
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
     <a class="navbar-brand">Users App</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav">
-        <a class="nav-link active" aria-current="page" [routerLink]="['/users']" [state]="{users,paginator}">User List</a>
+        <a class="nav-link active" aria-current="page" [routerLink]="['/users']" [state]="{users,paginator}">User
+          List</a>
+        @if(admin){
         <a class="nav-link" [routerLink]="['/users/create']">New user</a>
-        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+        }
+
       </div>
+    </div>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNavAuth">
+      <span class="nav-item nav-link text-primary abrir-modal mx-3">
+        @if(login.isAuth){
+        {{login.user.username}}
+        <button (click)="handlerLogout()" class="btn btn-outline-danger mx-2">Logout</button>
+        }@else {
+        <a class="btn btn-outline-primary" [routerLink]="['/login']">Sign in</a>
+        }
+      </span>
     </div>
   </div>
 </nav>

@@ -5,6 +5,7 @@ import { User } from './model/user';
 import { UserService } from './services/user-service';
 import Swal from 'sweetalert2';
 import { SharingData } from './services/sharing-data';
+import { AuthService } from './services/auth-service';
 
 @Component({
     selector: 'app-root',
@@ -20,7 +21,7 @@ export class App {
 
     userSelected!: User;
 
-    constructor(private service: UserService, private sharingData: SharingData, private router: Router, private route: ActivatedRoute) {
+    constructor(private service: UserService, private sharingData: SharingData, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
         this.cleanUser();
     }
 
@@ -35,7 +36,7 @@ export class App {
         }
     }
 
-    pageUsersEvent(){
+    pageUsersEvent() {
         this.sharingData.pageUserEventEmitter.subscribe(paginable => {
             this.users = paginable.users;
             this.paginator = paginable.paginator;
@@ -53,6 +54,7 @@ export class App {
         this.addUser();
         this.removeUser();
         this.findUserById();
+        this.handlerLogin();
         // this.selectUser();
     }
 
@@ -60,6 +62,37 @@ export class App {
         this.sharingData.findUserByIdEventEmitter.subscribe(id => {
             const user = this.users.find(user => user.id == id);
             this.sharingData.selectUserEventEmitter.emit(user);
+        })
+    }
+
+    handlerLogin() {
+        this.sharingData.handlerLoginEventEmitter.subscribe(({ username, password }) => {
+            console.log(username + " ---- " + password);
+            this.authService.loginUser({ username, password }).subscribe({
+                next: respose => {
+                    const token = respose.token;
+                    console.log("token: "+token);
+                    const payload = this.authService.getPayload(token);
+                    console.log(payload);
+                    const user = {username: payload.sub}
+                    const login = {
+                        user,
+                        isAuth: true,
+                        isAdmin: payload.isAdmin
+                    }
+                    this.authService.token=token;
+                    this.authService.user = login;
+                    this.router.navigate(['/users'], { state: { users: this.users, paginator: this.paginator } })
+                },
+                error: error => {
+                    if(error.status == 401){
+                        console.log(error);
+                        Swal.fire("Error en el login", error.error.message, "error");
+                    }else{
+                        throw error;
+                    }
+                }
+            })
         })
     }
 
@@ -83,7 +116,7 @@ export class App {
                             showConfirmButton: false,
                             timer: 1500
                         });
-                        this.router.navigate(['/users'], { state: { users: this.users,paginator: this.paginator } })
+                        this.router.navigate(['/users'], { state: { users: this.users, paginator: this.paginator } })
                     },
                     error: (err) => {
                         this.sharingData.errorsUserFormEventEmitter.emit(err.error);
@@ -101,7 +134,7 @@ export class App {
                             showConfirmButton: false,
                             timer: 1500
                         });
-                        this.router.navigate(['/users'], { state: { users: this.users,paginator: this.paginator } })
+                        this.router.navigate(['/users'], { state: { users: this.users, paginator: this.paginator } })
                     },
                     error: (err) => {
                         this.sharingData.errorsUserFormEventEmitter.emit(err.error);
@@ -122,7 +155,7 @@ export class App {
             this.service.removeUser(id).subscribe(() => {
                 this.users = this.users.filter(u => u.id != id);
                 this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
-                    this.router.navigate(['/users'], { state: { users: this.users,paginator: this.paginator } })
+                    this.router.navigate(['/users'], { state: { users: this.users, paginator: this.paginator } })
                 });
             });
 

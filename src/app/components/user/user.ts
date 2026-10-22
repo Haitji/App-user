@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user-service';
 import { SharingData } from '../../services/sharing-data';
 import { PaginatorComponent } from '../paginator-component/paginator-component';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'user',
@@ -22,7 +23,7 @@ export class UserComponent implements OnInit {
 
   title: string = "listado de usuarios";
 
-  constructor(private router: Router, private service: UserService, private sharingData: SharingData, private route: ActivatedRoute) {
+  constructor(private router: Router, private service: UserService, private sharingData: SharingData, private route: ActivatedRoute, private authService:AuthService) {
     if (this.router.currentNavigation()?.extras.state) {
       this.users = this.router.currentNavigation()?.extras.state!['users'];
       this.paginator = this.router.currentNavigation()?.extras.state!['paginator'];
@@ -80,5 +81,9 @@ export class UserComponent implements OnInit {
   updateUser(userRow: User): void {
     //this.sharingData.selectUserEventEmitter.emit(userRow);
     this.router.navigate(['users/edit', userRow.id])
+  }
+
+  get admin(){
+    return this.authService.isAdmin();
   }
 }

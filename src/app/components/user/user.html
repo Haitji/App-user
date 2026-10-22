@@ -1,5 +1,9 @@
 <h3>{{title}}</h3>
+
+@if(admin){
 <button class="btn btn-primary my-4" [routerLink]="['/users/create']"> crear usuario</button>
+}
+
 
 @if(users.length==0){
 <div class="alert alert-danger">No hay usuarios registrados</div>
@@ -11,8 +15,11 @@
             <th>lastname</th>
             <th>email</th>
             <th>username</th>
+            @if(admin){
             <th>delete</th>
             <th>update</th>
+            }
+
         </tr>
     </thead>
     <tbody>
@@ -22,8 +29,11 @@
             <td> {{user.lastname}} </td>
             <td> {{user.email}} </td>
             <td> {{user.username}} </td>
+            @if(admin){
             <td> <button class="btn btn-danger btn-sm" (click)="deleteUser(user.id)">Delete</button> </td>
             <td> <button class="btn btn-primary btn-sm" [routerLink]="['/users/edit',user.id]">Update</button> </td>
+            }
+
         </tr>
         }
     </tbody>
