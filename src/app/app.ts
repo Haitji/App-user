@@ -6,6 +6,9 @@ import { UserService } from './services/user-service';
 import Swal from 'sweetalert2';
 import { SharingData } from './services/sharing-data';
 import { AuthService } from './services/auth-service';
+import { Store } from '@ngrx/store';
+import { add, find, findAll, remove, setPaginator, update } from './store/users.actions';
+
 
 @Component({
     selector: 'app-root',
@@ -18,11 +21,23 @@ export class App {
 
     users: User[] = [];
     paginator: any = {};
+    user!: User;
 
     userSelected!: User;
 
-    constructor(private service: UserService, private sharingData: SharingData, private router: Router, private route: ActivatedRoute, private authService: AuthService) {
+    constructor(private service: UserService,
+         private sharingData: SharingData, 
+         private router: Router, 
+         private route: ActivatedRoute, 
+         private authService: AuthService,
+         private store: Store<{users:any}>
+        ) {
         this.cleanUser();
+        this.store.select('users').subscribe(state =>{
+            this.users = state.users,
+            this.paginator = state.paginator,
+            this.user =state.user
+        })
     }
 
     cleanUser(): void {
@@ -38,8 +53,10 @@ export class App {
 
     pageUsersEvent() {
         this.sharingData.pageUserEventEmitter.subscribe(paginable => {
-            this.users = paginable.users;
-            this.paginator = paginable.paginator;
+            //this.users = paginable.users;
+            //this.paginator = paginable.paginator;
+            this.store.dispatch(findAll({users: paginable.users}));
+            this.store.dispatch(setPaginator({paginator: paginable.paginator}));
         })
     }
 
@@ -60,8 +77,9 @@ export class App {
 
     findUserById() {
         this.sharingData.findUserByIdEventEmitter.subscribe(id => {
-            const user = this.users.find(user => user.id == id);
-            this.sharingData.selectUserEventEmitter.emit(user);
+            //const user = this.users.find(user => user.id == id);
+            this.store.dispatch(find({id}));
+            this.sharingData.selectUserEventEmitter.emit(this.user);
         })
     }
 
@@ -103,12 +121,13 @@ export class App {
             if (user.id > 0) {
                 this.service.updateUser(user).subscribe({
                     next: (userUpdate) => {
-                        this.users = this.users.map(u => {
-                            if (u.id == userUpdate.id) {
-                                return { ...userUpdate };
-                            }
-                            return u;
-                        })
+                        // this.users = this.users.map(u => {
+                        //     if (u.id == userUpdate.id) {
+                        //         return { ...userUpdate };
+                        //     }
+                        //     return u;
+                        // })
+                        this.store.dispatch(update({userUpdate}));
                         Swal.fire({
                             icon: "success",
                             title: "Guardado",
@@ -126,7 +145,8 @@ export class App {
             } else {
                 this.service.createUser(user).subscribe({
                     next: (userNew) => {
-                        this.users = [... this.users, { ...userNew }];
+                        //this.users = [... this.users, { ...userNew }];
+                        this.store.dispatch(add({userNew}));
                         Swal.fire({
                             icon: "success",
                             title: "Guardado",
@@ -153,7 +173,8 @@ export class App {
     removeUser(): void {
         this.sharingData.userIdEventEmitter.subscribe(id => {
             this.service.removeUser(id).subscribe(() => {
-                this.users = this.users.filter(u => u.id != id);
+                //this.users = this.users.filter(u => u.id != id);
+                this.store.dispatch(remove({id}));
                 this.router.navigate(['/users/create'], { skipLocationChange: true }).then(() => {
                     this.router.navigate(['/users'], { state: { users: this.users, paginator: this.paginator } })
                 });
